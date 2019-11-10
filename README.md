@@ -3,6 +3,7 @@
 ## Data Cleaning
 In the original dataset, there is a column called __GeoName__ which has names of the county/CBSA and states separated by comma. We separated them and put them into several columns.
 * added columns
+
     | New Columns | Description |
     | --- | ---- |
     | GeoName_new | GeoName without States |
@@ -13,7 +14,7 @@ In the original dataset, there is a column called __GeoName__ which has names of
     | StateName_1 | The first state |
     | StateName_2 | The second state. "Empty" means NaN |
     | StateName_3 | Same as above |
-    | StateName_4 | Same as above |
+    | StateName_4 | Same as above | 
 * There are 4 geographic types:
   1. National
   2. State
