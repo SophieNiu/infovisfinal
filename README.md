@@ -2,6 +2,7 @@
 
 ## Data Cleaning
 In the original dataset, there is a column called __GeoName__ which has names of the county/CBSA and states separated by comma. We separated them and put them into several columns.
+New file was called _climate_dataset_cleaned_v1.0.csv_ in the file _dataset_.
 * added columns
 
     | New Columns | Description |
