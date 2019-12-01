@@ -26,3 +26,8 @@ New file was called _climate_dataset_cleaned_v1.0.csv_ in the file _dataset_.
   Since some counties include areas in several states, the sum of __TotalPop__ for all the counties in one state may not equal to the __TotalPop__ of one state.You can find more information in the code.
 
 
+## Agenda
+1. visualization selection 
+2. interaction
+3. website layout/ storyline (sections, content (as in text), visualization)
+4. insights (3) 
