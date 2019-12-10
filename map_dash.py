@@ -81,6 +81,7 @@ for i in range(0, len(counties['features'])):
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
 available_indicators = df2['event'].unique()
 available_indicators2 = df.columns.values
 
@@ -89,10 +90,10 @@ midwest = ['Ohio', 'Michigan', 'Indiana', 'Wisconsin', 'Illinois', 'Minnesota', 
 south = ['Delaware', 'Maryland', 'Virginia', 'West Virginia', 'Kentucky', 'North Carolina', 'South Carolina', 'Tennessee', 'Georgia', 'Florida', 'Alabama', 'Mississippi', 'Arkansas', 'Louisiana', 'Texas', 'Oklahoma']
 west = ['Montana', 'Idaho', 'Wyoming', 'Colorado', 'New Mexico', 'Arizona', 'Utah', 'Nevada', 'California', 'Oregon', 'Washington', 'Alaska', 'Hawaii']
 
-northeast_dict = {state:'northeast' for state in northeast}
-midwest_dict = {state:'midwest' for state in midwest}
-south_dict = {state:'south' for state in south}
-west_dict = {state:'west' for state in west}
+northeast_dict = {state:'Northeast' for state in northeast}
+midwest_dict = {state:'Midwest' for state in midwest}
+south_dict = {state:'South' for state in south}
+west_dict = {state:'West' for state in west}
 
 northeast_dict.update(midwest_dict)
 northeast_dict.update(south_dict)
@@ -106,64 +107,76 @@ df['region'] = df['state_label'].apply(lambda x: states_dict[x])
 df2['region'] = df2['state'].apply(lambda x: states_dict[x])
 
 colorsIdx = {'Democratic': 'blue', 'Republican': 'red'}
+colorsNum = {'Democratic': 0, 'Republican': 1}
 cols = df['party'].map(colorsIdx)
+p_num = df['party'].map(colorsNum)
 
-def title(text):
-    if text == 'happening':
-        return 'Percent of people who believe climate change is happening'
-    elif text == 'happeningOppose':
-        return 'Percent of people who believe climate change is not happening'
-    else:
-        return 'Percent of people who believe climate change is human imposed'
+df_region = df.groupby('region').mean().reset_index()[['region', 'happening', 'happeningOppose', 'affectweather', 'affectweatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose']]
+new = pd.merge(df2, df, left_on='districtId', right_on='geoid', how= 'right')
 
 app.layout = html.Div(
     [
-        html.Div([html.H1('Climate Change')],style={'text-align': 'center', 'padding-bottom': '30'}),
-        html.Div([html.Span('Display: ', className='six columns', style={'text-align': 'right', 'width': '40%', 'padding-top': 10}), dcc.Dropdown(id='value-selected', value='happening', options=[{'label': 'Happening', 'value': 'happening'}, {'label': 'HappeningOppose', 'value': 'happeningOppose'}, {'label': 'Human', 'value': 'human'},{'label': 'HumanOppose', 'value': 'humanOppose'}], style={'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '70%'}, className='container')], className='row'), dcc.Graph(id='my-graph'),
+        html.Br(),
+        html.Br(),
+        html.Div([html.H1('What Factors Influence Climate Change Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
+        html.Div([dcc.Dropdown(id='value-selected', value='happening', options=[{'label': 'How many people believe climate change is happening?', 'value': 'happening'}, {'label': 'How many people don\'t believe climate change is happening?', 'value': 'happeningOppose'}, {'label': 'How many people believe climate change is caused by humans?', 'value': 'human'},{'label': 'How many people don\'t believe climate change is caused by humans?', 'value': 'humanOppose'}], style={'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '70%'}, className='container')], className='row'), dcc.Graph(id='my-graph'),
+        html.Div([html.H2('Do Frequent Weather Events Influence Climate Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
         html.Div(
             [
-                html.Div([html.Div([dcc.Graph(id='northeast-scatter')], className='six columns')]),
-                html.Div([html.Div([dcc.Graph(id='midwest-scatter')], className='six columns')]),
-                html.Div([html.Div([dcc.Graph(id='south-scatter')], className='six columns')]),
-                html.Div([html.Div([dcc.Graph(id='west-scatter')], className='six columns')]),
-            ], className='container'),
+                dcc.Graph(id='northeast-scatter', className='three columns'),
+                dcc.Graph(id='midwest-scatter', className='three columns'),
+                dcc.Graph(id='south-scatter', className='three columns'),
+                dcc.Graph(id='west-scatter', className='three columns')
+            ], className='row'),
+        html.Br(),
+        html.Div([html.H2('How do opinions differ by region?')],style={'text-align': 'center', 'padding-bottom': '30'}),
+        html.Br(),
         html.Div([
-            html.Div([dcc.Dropdown(id='value-selected2', value='Congressional District 1 (115th Congress), Alabama', options=[{'label':x, 'value': x} for x in df['GeoName'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '49%'}), dcc.Graph(id='my-bars')], className='six columns'),
-            html.Div([dcc.Dropdown(id='value-selected3', value='Congressional District 1 (115th Congress), Michigan', options=[{'label':x, 'value': x} for x in df['GeoName'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '49%'}), dcc.Graph(id='my-bars2')], className='six columns')
+            html.Div([dcc.Dropdown(id='value-selected-region1', value='Northeast', options=[{'label':x, 'value': x} for x in df_region['region'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '70%'}), dcc.Graph(id='my-bars3')], className='six columns'),
+            html.Div([dcc.Dropdown(id='value-selected-region2', value='Midwest', options=[{'label':x, 'value': x} for x in df_region['region'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '70%'}), dcc.Graph(id='my-bars4')], className='six columns')
         ], className='container'),
-        html.Div([dcc.Dropdown(id='events-scatter-value',options=[{'label': i, 'value': i} for i in available_indicators],value='Excessive Heat'), html.Div([dcc.Graph(id='events-scatter')], style={'width': '49%', 'display': 'inline-block', 'text-align': 'center'})], className='container', style={'borderBottom': 'thin lightgrey solid','backgroundColor': 'rgb(250, 250, 250)','padding': '10px 5px'})
+        html.Br(),
+        html.Div([html.H2('How do opinions differ by district?')],style={'text-align': 'center', 'padding-bottom': '30'}),
+        html.Br(),
+        html.Div([
+            html.Div([dcc.Dropdown(id='value-selected2', value='Congressional District 1 (115th Congress), Alabama', options=[{'label':x, 'value': x} for x in df['GeoName'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '100%'}), dcc.Graph(id='my-bars')], className='six columns'),
+            html.Div([dcc.Dropdown(id='value-selected3', value='Congressional District 1 (115th Congress), Michigan', options=[{'label':x, 'value': x} for x in df['GeoName'].values], style={'text-align':'center', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '100%'}), dcc.Graph(id='my-bars2')], className='six columns')
+        ], className='container'),
+        html.Br(),
+        html.Div([dcc.Graph(id='events-scatter', className='container')])
     ]
 )
+
 @app.callback(
     dash.dependencies.Output('my-graph', 'figure'),
     [dash.dependencies.Input('value-selected', 'value')]
 )
 
 def update_figure(selected):
-
+    opacity = df[selected].values * .01
     fig = go.Choroplethmapbox(
         customdata=df,
         geojson=counties, 
         locations=df['geoid'],
-        z=df[selected],
+        z=p_num,
         text=df['GeoName'], 
-        autocolorscale=False, 
-        colorscale='YlGnBu',
+        autocolorscale=False,
+        marker_opacity=opacity,
         marker={
             'line': {
                 'color': 'rgb(250,250,248)',
-                'width': 1
-            }
+                'width': 1,
+            },
         }, 
         colorbar={
             'thickness': 10,
             'len': 0.3,
-            'x': 0.9,
-            'y': 0.7, 
-            'title': {
-                'text': title(selected),
-                'side': 'top'
-            }
+            'x': 1,
+            'y': 1, 
+            # 'title': {
+            #     'text': title(selected),
+            #     'side': 'right'
+            # }
         }
     )
     return {
@@ -174,8 +187,57 @@ def update_figure(selected):
             mapbox_center = {
                 'lat': 37.0902, 
                 'lon': -95.7129}, 
-                title=title(selected), 
                 height=800
+        )
+    }
+
+@app.callback(
+    dash.dependencies.Output('my-bars3', 'figure'),
+    [dash.dependencies.Input('value-selected-region1', 'value')]
+)
+
+def update_bars(region1):
+    dff = df_region.loc[df_region['region'] == region1][['happening', 'happeningOppose', 'affectweather', 'affectweatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose']]
+    values = dff.values[0]
+    agree_vals = [values[0], values[2], values[4], values[6]]
+    disagree_vals = [values[1], values[3], values[5], values[7]]
+    opinions = ['Happening', 'Affects weather', 'Harmful to the US', 'Worrisome']
+
+    bars = data=[
+        go.Bar(name='Agree', x=opinions, y=agree_vals, marker_color='rgb(45,117,0)'),
+        go.Bar(name='Disagree', x=opinions, y=disagree_vals, marker_color='rgb(80,182,0)'),
+    ]
+    return {
+        'data': bars,
+        'layout': go.Layout(
+            title="Average Climate Opinion of the {}".format(region1),
+            xaxis_title="Opinion",
+            yaxis_title="Percent of People Who Share This Opinion"
+        )
+    }
+
+@app.callback(
+    dash.dependencies.Output('my-bars4', 'figure'),
+    [dash.dependencies.Input('value-selected-region2', 'value')]
+)
+
+def update_bars(region2):
+    dff = df_region.loc[df_region['region'] == region2][['happening', 'happeningOppose', 'affectweather', 'affectweatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose']]
+    values = dff.values[0]
+    agree_vals = [values[0], values[2], values[4], values[6]]
+    disagree_vals = [values[1], values[3], values[5], values[7]]
+    opinions = ['Happening', 'Affects weather', 'Harmful to the US', 'Worrisome']
+
+    bars = data=[
+        go.Bar(name='Agree', x=opinions, y=agree_vals, marker_color='rgb(45,117,0)'),
+        go.Bar(name='Disagree', x=opinions, y=disagree_vals, marker_color='rgb(80,182,0)'),
+    ]
+    return {
+        'data': bars,
+        'layout': go.Layout(
+            title="Average Climate Opinion of the {}".format(region2),
+            xaxis_title="Opinion",
+            yaxis_title="Percent of People Who Share This Opinion",
         )
     }
 
@@ -186,14 +248,22 @@ def update_figure(selected):
 
 def update_bars(selected2):
     dff = df.loc[df['GeoName'] == selected2][['happening', 'happeningOppose', 'affectweather', 'affectweatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose']]
-    bars = go.Bar(
-        y=list(dff.values[0]),
-        x=['happening', 'happeningOppose', 'affectWeather', 'affectWeatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose'],
-        orientation='v',
-        opacity=0.6
-    )
+    values = dff.values[0]
+    agree_vals = [values[0], values[2], values[4], values[6]]
+    disagree_vals = [values[1], values[3], values[5], values[7]]
+    opinions = ['Happening', 'Affects weather', 'Harmful to the US', 'Worrisome']
+
+    bars = data=[
+        go.Bar(name='Agree', x=opinions, y=agree_vals, marker_color='rgb(45,117,0)'),
+        go.Bar(name='Disagree', x=opinions, y=disagree_vals, marker_color='rgb(80,182,0)'),
+    ]
     return {
-        'data': [bars]
+        'data': bars,
+        'layout': go.Layout(
+            title="Average Climate Opinion of the {}".format(selected2),
+            xaxis_title="Opinion",
+            yaxis_title="Percent of People Who Share This Opinion",
+        )
     }
 
 @app.callback(
@@ -203,50 +273,32 @@ def update_bars(selected2):
 
 def update_bars(selected3):
     dff = df.loc[df['GeoName'] == selected3][['happening', 'happeningOppose', 'affectweather', 'affectweatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose']]
-    bars = go.Bar(
-        y=list(dff.values[0]),
-        x=['happening', 'happeningOppose', 'affectWeather', 'affectWeatherOppose', 'harmUS', 'harmUSOppose', 'worried', 'worriedOppose'],
-        orientation='v',
-        opacity=0.6
-    )
-    return {
-        'data': [bars]
-    }
+    values = dff.values[0]
+    agree_vals = [values[0], values[2], values[4], values[6]]
+    disagree_vals = [values[1], values[3], values[5], values[7]]
+    opinions = ['Happening', 'Affects weather', 'Harmful to the US', 'Worrisome']
 
-@app.callback(
-    dash.dependencies.Output('events-scatter', 'figure'),
-    [dash.dependencies.Input('events-scatter-value', 'value')])
-
-def update_graph(event):
+    bars = data=[
+        go.Bar(name='Agree', x=opinions, y=agree_vals, marker_color='rgb(45,117,0)'),
+        go.Bar(name='Disagree', x=opinions, y=disagree_vals, marker_color='rgb(80,182,0)'),
+    ]
     return {
-        'data': [dict(
-            y=df['geoid'].values,
-            x=df2[df2['event'] == event]['alerts_total'],
-            text=df['party'].values,
-            customdata=df2[df2['event'] == event]['districtId'],
-            mode='markers',
-            marker={
-                'color':cols, 
-                'size': 15,
-                'opacity': 0.5,
-                'line': {'width': 0.5, 'color': 'white'}
-            }
-        )],
-        'layout': dict(
-            title='Events',
-            margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-            height=450,
-            hovermode='closest',
+        'data': bars,
+        'layout': go.Layout(
+            title="Average Climate Opinion of the {}".format(selected3),
+            xaxis_title="Opinion",
+            yaxis_title="Percent of People Who Share This Opinion",
         )
     }
+
 
 @app.callback(
     dash.dependencies.Output('northeast-scatter', 'figure'),
     [dash.dependencies.Input('value-selected', 'value')])
 
 def update_graph_northeast(selected):
-    dff = df[df['region'] == 'northeast'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
-    dff2 = df2[df2['region'] == 'northeast']
+    dff = df[df['region'] == 'Northeast'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
+    dff2 = df2[df2['region'] == 'Northeast']
     return {
         'data': [dict(
             x=dff2['alerts_total'].values,
@@ -260,11 +312,10 @@ def update_graph_northeast(selected):
                 'line': {'width': 0.5, 'color': 'white'}
             }
         )],
-        'layout': dict(
-            title='% Believe {} in the Northeast'.format(selected),
-            margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-            height=450,
-            hovermode='closest',
+        'layout': go.Layout(
+            title="Opinions of People in the Northeast",
+            xaxis_title="Number of Weather Alerts",
+            yaxis_title='Percent of People Who Agree: {}'.format(selected),
         )
     }
 
@@ -274,8 +325,8 @@ def update_graph_northeast(selected):
     [dash.dependencies.Input('value-selected', 'value')])
 
 def update_graph_midwest(selected):
-    dff = df[df['region'] == 'midwest'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
-    dff2 = df2[df2['region'] == 'midwest']
+    dff = df[df['region'] == 'Midwest'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
+    dff2 = df2[df2['region'] == 'Midwest']
     return {
         'data': [dict(
             x=dff2['alerts_total'].values,
@@ -289,12 +340,10 @@ def update_graph_midwest(selected):
                 'line': {'width': 0.5, 'color': 'white'}
             }
         )],
-        'layout': dict(
-            title='% Believe {} in the Midwest'.format(selected),
-            color="red",
-            margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-            height=450,
-            hovermode='closest',
+        'layout': go.Layout(
+            title="Opinions of People in the Midwest",
+            xaxis_title="Number of Weather Alerts",
+            yaxis_title='Percent of People Who Agree: {}'.format(selected),
         )
     }
 
@@ -303,8 +352,8 @@ def update_graph_midwest(selected):
     [dash.dependencies.Input('value-selected', 'value')])
 
 def update_graph_south(selected):
-    dff = df[df['region'] == 'south'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
-    dff2 = df2[df2['region'] == 'south']
+    dff = df[df['region'] == 'South'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
+    dff2 = df2[df2['region'] == 'South']
     return {
         'data': [dict(
             x=dff2['alerts_total'].values,
@@ -318,12 +367,10 @@ def update_graph_south(selected):
                 'line': {'width': 0.5, 'color': 'white'}
             }
         )],
-        'layout': dict(
-            title='% Believe {} in the South'.format(selected),
-            color="red",
-            margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-            height=450,
-            hovermode='closest',
+        'layout': go.Layout(
+            title="Opinions of People in the South",
+            xaxis_title="Number of Weather Alerts",
+            yaxis_title='Percent of People Who Agree: {}'.format(selected),
         )
     }
 
@@ -334,8 +381,8 @@ def update_graph_south(selected):
     [dash.dependencies.Input('value-selected', 'value')])
 
 def update_graph_west(selected):
-    dff = df[df['region'] == 'west'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
-    dff2 = df2[df2['region'] == 'west']
+    dff = df[df['region'] == 'West'][['geoid', 'party', 'happening', 'happeningOppose', 'human', 'humanOppose', 'GeoName']]
+    dff2 = df2[df2['region'] == 'West']
 
     return {
         'data': [dict(
@@ -350,13 +397,55 @@ def update_graph_west(selected):
                 'line': {'width': 0.5, 'color': 'white'}
             }
         )],
-        'layout': dict(
-            title='% Believe {} in the West'.format(selected),
-            margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-            height=450,
-            hovermode='closest',
+        'layout': go.Layout(
+            title="Opinions of People in the West",
+            xaxis_title="Number of Weather Alerts",
+            yaxis_title='Percent of People Who Agree: {}'.format(selected),
         )
     }
+
+@app.callback(
+    dash.dependencies.Output('events-scatter', 'figure'),
+    [dash.dependencies.Input('value-selected2', 'value'), dash.dependencies.Input('value-selected3', 'value')])
+
+def update_graph(selected2, selected3):
+    df1 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values[0])
+    df2 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values[0])
+    max_1 = pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values.max()
+    # max_2 = pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values
+    # combined = np.concatenate(max_1, max_2)
+    # maxed = combined.max()
+
+    categories = list(pd.pivot_table(new.groupby('geoid').get_group(101), values='alerts_total', columns='event').columns)
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatterpolar(
+        r=df1,
+        theta=categories,
+        fill='toself',
+        name=selected2,
+        marker_color='rgb(104,115,135)'
+    ))
+
+    fig.add_trace(go.Scatterpolar(
+        r=df2,
+        theta=categories,
+        fill='toself',
+        name=selected3,
+        marker_color='rgb(136,171,184)'
+    ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+            visible=True,
+            range=[0, max_1]
+            )),
+        showlegend=True
+    )
+
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
