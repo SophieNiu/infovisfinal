@@ -7,10 +7,19 @@ import pandas as pd
 import json
 import plotly.graph_objects as go
 import numpy as np
+# local path 
 
-with urlopen('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned-us-115th-congress.geojson') as response:
+f = open('dataset/CleanedData/cleaned-us-115th-congress.geojson','r')
+string = f.read()
+counties= json.loads(string)
+# print('hei')
+# counties = json.loads('dataset/CleanedData/cleaned-us-115th-congress.geojson')
+with open('dataset/CleanedData/cleaned-us-115th-congress.geojson') as response:
     counties = json.load(response)
-df = pd.read_csv('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/Congress_YCOM_2019_Data.csv', dtype={'geoid': int})
+# with urlopen('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned-us-115th-congress.geojson') as response:
+#     counties = json.load(response)
+
+df = pd.read_csv('dataset/CleanedData/Congress_YCOM_2019_Data.csv', dtype={'geoid': int})
 df['state_label'] = df['state_label'].apply(lambda x: 'Conneticut' if x == 'Connecticut' else x)
 
 states = {
@@ -73,7 +82,8 @@ states = {
         'WY': 'Wyoming'
 }
 
-df2 = pd.read_csv('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned_district_events.csv')
+df2 = pd.read_csv('dataset/CleanedData/cleaned_district_events.csv')
+print('hi')
 df2['state'] = df2['state'].apply(lambda x: states[x])
 for i in range(0, len(counties['features'])):
     counties['features'][i]['id'] = counties['features'][i]['properties']['geoid']
