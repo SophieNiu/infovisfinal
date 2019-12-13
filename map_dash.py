@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import dash
-from urllib.request import urlopen
+# from urllib.request import urlopen
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -88,9 +88,11 @@ df2['state'] = df2['state'].apply(lambda x: states[x])
 for i in range(0, len(counties['features'])):
     counties['features'][i]['id'] = counties['features'][i]['properties']['geoid']
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__,external_stylesheets=['dataset/css/html5reset.css'])
+
 
 available_indicators = df2['event'].unique()
 available_indicators2 = df.columns.values
@@ -458,4 +460,15 @@ def update_graph(selected2, selected3):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    ## modified by Yixian
+    is_pull_data = input("Do you want to extract the data?(Y/N)").strip()
+    is_pull_data = bool(is_pull_data == "Y")
+    if is_pull_data:
+        df.to_csv("./extracted/congress.csv", index=False)
+        df2.to_csv("./extracted/events.csv", index=False)
+    else:
+        app.run_server(debug=True)
+
+    ## end
+    # app.run_server(debug=True)
+    
