@@ -9,6 +9,14 @@ import plotly.graph_objects as go
 import numpy as np
 import copy
 
+# for Sophie to open up the vis on her computer
+# f = open('dataset/CleanedData/cleaned-us-115th-congress.geojson', 'r')
+# string = f.read()
+# counties = json.loads(string)
+
+# df = pd.read_csv('dataset/CleanedData/Congress_YCOM_2019_Data.csv', dtype={'geoid': int})
+
+
 with urlopen('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned-us-115th-congress.geojson') as response:
     counties = json.load(response)
 df = pd.read_csv('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/Congress_YCOM_2019_Data.csv', dtype={'geoid': int})
@@ -73,6 +81,8 @@ states = {
         'WV': 'West Virginia',
         'WY': 'Wyoming'
 }
+# df2 = pd.read_csv(
+#     'dataset/CleanedData/cleaned_district_events.csv')
 
 df2 = pd.read_csv('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned_district_events.csv')
 df2['state'] = df2['state'].apply(lambda x: states[x])
@@ -124,28 +134,34 @@ app.layout = html.Div(
     [
         html.Div([html.H1('What Factors Influence Climate Change Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
         html.Div([html.H2('Do Frequent Weather Events Influence Climate Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
-        html.Div([html.H4('Benjamin Fielsta, Matthew Hanger, Nai-Yu Shih, Sophie Niu',style={'text-align':'center'}),
+        html.Div([html.H4('Benjamin Fielstra, Matthew Hanger, Nai Shih, Sophie Niu', style={'text-align': 'center'}),
                 html.H4('SI649 Fall 2019',style={'text-align':'center'})],),
+
+        html.Div([html.H3('Introduction to our problem', style={'text-align': 'center'})],),
         html.Div([html.P(['''The United States is currently facing an extreme amount of political polarization, impacting public opinion on a number of topics and splitting it down party lines. 
                 Climate change is one particular topic that carries a great deal of scientific evidence behind it, but opinions on climate change are still widely believed to be influenced by party affiliation.
                  However, ''', html.A('many',href='https://climatecommunication.yale.edu/visualizations-data/ycom-us/'),' ',html.A('recent',href='https://www.pewresearch.org/fact-tank/2019/04/19/how-americans-see-climate-change-in-5-charts/'),
                   ' ',html.A('studies',href='https://www.sciencenews.org/article/most-americans-now-see-signs-climate-change-where-they-live'),''' suggest that party identity may not be the only factor motivating beliefs behind climate change,
                    as roughly 2/3rds of all Americans share a belief that some form of climate change is happening, and nearly 60% believe that it’s having a direct impact on their local communities.  Belief that climate change is the result of human activity is much more divided,
-                    at roughly 50%, suggesting that although more people now believe in climate change, political divisions may still exist in people’s deeper beliefs about the causes and need to take action.'''],  style={'marginTop': 50, 'text-align':'center', 'padding':'5'},),
-                    html.P(['Using data from the ',html.A('2019 Yale Climate Opinion Maps',href='https://climatecommunication.yale.edu/visualizations-data/ycom-us/'),' in combination with ',
+                    at roughly 50%, suggesting that although more people now believe in climate change, political divisions may still exist in people’s deeper beliefs about the causes and need to take action.'''],  style={'marginTop': 50, 'text-align':'center', 'padding':'5'},),],),
+        html.Div([html.H3('Overview of our Data', style={'text-align': 'center'})],),
+        html.P(['Using data from the ',html.A('2019 Yale Climate Opinion Maps',href='https://climatecommunication.yale.edu/visualizations-data/ycom-us/'),' in combination with ',
                     html.A('spatial data',href='https://public.opendatasoft.com/explore/dataset/us-115th-congress-members/map/?location=5,35.40696,-92.70264&basemap=jawg.streets'),
                     ''' containing the party affiliations for each congressional district during the 115th Congress, we can examine the beliefs of individual districts in relation to their recent party affiliation. Looking at individual districts,
-                     we can highlight some of these differences of belief by party affiliation.'''],style={'marginTop': 5, 'text-align':'center', 'padding':'5'})]),
+                     we can highlight some of these differences of belief by party affiliation.'''],style={'marginTop': 5, 'text-align':'center', 'padding':'5'}),
+        html.Br(),
+        html.Div(
+            [html.H3('Patterns in the data', style={'text-align': 'center'})],),
         html.Div([
             html.P('''Michigan’s 11th and 12th congressional districts represent one common pattern. Michigan’s 11th district is a mix of suburban and rural municipalities, while Michigan’s 12th right next door is primarily urban communities.
              The 11th district is traditionally Republican-leaning, while the 12th is traditionally Democratic-leaning. In the case of these two neighboring districts that happen to be split along party lines, we clearly see a nearly 10% difference
-              in belief that climate change is happening, with the 11th at around 61% belief, and the 12th at around 70% belief. Surprisingly, the difference in belief that climate change is human-caused is roughly the same, but even in the Democratic
-               12th district, belief in human-caused climate change maxes out at around 59%. This shows some of the common patterns in belief between urban districts and their neighboring suburbs and exurbs around the country. ''',  style={'marginTop': 100}, className='four columns'), 
+              in belief that climate change is happening, with the 11th at around 61% belief, and the 12th at around 70% belief. Surprisingly, the difference in belief wether climate change is human-caused or nature-caused is roughly the same, but even in the Democratic
+               12th district, belief in human-caused climate change maxes out at around 59%. This shows a repeating belief difference pattern that we found between urban districts and their neighboring suburbs and exurbs around the country. ''',  style={'marginTop': 100}, className='four columns'), 
             dcc.Graph(id='matt-graph', className='eight columns', config={'displayModeBar':False})
         ], className='container'),
         html.Div([dcc.Graph(id='ben-graph', className='nine columns'),
-            html.P('''Indiscriminate of political affiliation, some districts are in agreement while others remain highly contested.  Alabama's 1st congressional district is a prime example of this.  A little over half the population is in agreement that climate change is a serious
-             concern and is happening; however, the other half disagrees.  As you will see, disputed districts like these are more common in the Midwest and areas in the South.''',  style={'marginTop': 100}, className='three columns')
+            html.P('''Indiscriminate of political affiliation, some districts are in agreement while others remain highly contested.  Alabama's 1st congressional district is a prime example of this. A little over half the population is in agreement that climate change is a serious
+            concern and is happening; however, the other half disagrees.  As you will see, disputed districts like these are more common in the Midwest and areas in the South.''',  style={'marginTop': 100}, className='three columns')
         ], className='container'),
         html.Div([
             html.P('''Contrary to the 1st congressional district of Alabama is New York's 10th congressional district.  While Alabama's first congressional district is highly divided, New York's 10th is generally unified in the belief that climate change is happening.  In fact, New York's
@@ -158,11 +174,13 @@ app.layout = html.Div(
         #     eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
         #     Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''', style={'marginTop': 100}, className='three columns')
         # ], className='container'),
-        html.Div(html.P('''The surprising closeness of people’s belief that climate change is happening in addition to the patterns in party affiliation and climate opinion across the country led us to wonder whether districts that 
-                    were experiencing harsh weather more frequently were likely to believe more strongly in climate change. We obtained a dataset containing all weather alerts by congressional district for the last 12 months from
-                     Dr. Perry Samson here at the University of Michigan, and plotted the number of alerts against opinion that climate change is happening on a regional basis to see if any trends stood out. There doesn’t appear to be a strong 
-                     correlation between the number of weather alerts and the percentage of the district that believes climate change is happening. Between regions, the Midwest seems much more divided on their belief that climate change is happening in comparison to the Northeast or West. ''',  
-                     style={'marginTop': 50, 'text-align':'center', 'padding':'5'},)),
+        html.Div(html.P('''In addition to finding little pattern in people's climate opinion with regard to their party affiliation,  we also found little correlation between people who 
+                    experienced harsh weather more frequently and the likelihood of believing more strongly in climate change.''', style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)), 
+        html.Br(),
+        html.Div(html.P('''
+                    We obtained a dataset containing all weather alerts by congressional district for the last 12 months from
+                     Dr. Perry Samson here at the University of Michigan, and plotted the number of alerts against opinion that climate change is happening on a regional basis to see if any trends stood out. There doesn’t appear to be a strong correlation between the number of weather alerts and the percentage of the district that believes climate change is happening. Between regions, the Midwest seems much more divided on their belief that climate change is happening in comparison to the Northeast or West. ''',  
+                        style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)),
         html.Div(
             [
                 dcc.Graph(id='northeast-scatter', className='three columns'),
@@ -172,8 +190,10 @@ app.layout = html.Div(
             ], className='row'),
         html.Br(),
         html.Div(html.P('''Many of the patterns highlighted above exist throughout the country. The visualizations presented below can be used to examine opinions on climate change between specific regions of the country, as well as between specific districts. The national map can be used to view the strength
-         of a given opinion by party – select a climate change opinion measure from the dropdown, and examine the opacity of each district’s party color to see where support for a given opinion is particularly strong or particularly weak. Take an especially close look at opinions near costal regions, between cities and 
-         their neighboring suburbs, and general opinions throughout broad portions of the Midwest and South for further evidence of the patterns described above. ''',style={'marginTop': 50, 'text-align':'center', 'padding':'5'},)),
+         of a given opinion by party – select a climate change opinion measure from the dropdown, and examine the opacity of each district’s party color to see where support for a given opinion is particularly strong or particularly weak. ''', style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)),
+        html.Div(html.P('''
+         Take an especially close look at opinions near costal regions, between cities and 
+         their neighboring suburbs, and general opinions throughout broad portions of the Midwest and South for further evidence of the patterns described above. ''', style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)),
         html.Br(),
         html.Div([html.H2('How do opinions differ by region?')],style={'text-align': 'center', 'padding-bottom': '30'}),
         html.Br(),
