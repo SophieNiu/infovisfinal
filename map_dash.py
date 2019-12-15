@@ -7,6 +7,7 @@ import pandas as pd
 import json
 import plotly.graph_objects as go
 import numpy as np
+import copy
 
 with urlopen('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned-us-115th-congress.geojson') as response:
     counties = json.load(response)
@@ -123,15 +124,10 @@ app.layout = html.Div(
     [
         html.Div([html.H1('What Factors Influence Climate Change Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
         html.Div([html.H2('Do Frequent Weather Events Influence Climate Beliefs?')],style={'text-align': 'center', 'padding-bottom': '30'}),
-        html.Div(
-            [
-                dcc.Graph(id='northeast-scatter', className='three columns'),
-                dcc.Graph(id='midwest-scatter', className='three columns'),
-                dcc.Graph(id='south-scatter', className='three columns'),
-                dcc.Graph(id='west-scatter', className='three columns')
-            ], className='row'),
-        html.Br(),
-        html.Br(),
+        html.Div([html.P('''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ullamcorper gravida lorem finibus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+            Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
+            eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
+            Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''',  style={'marginTop': 100, 'text-align':'center', 'padding':'30'},)]),
         html.Div([
             html.P('''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ullamcorper gravida lorem finibus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
             Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
@@ -139,7 +135,7 @@ app.layout = html.Div(
             Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''',  style={'marginTop': 100}, className='four columns'), 
             dcc.Graph(id='matt-graph', className='eight columns', config={'displayModeBar':False})
         ], className='container'),
-        html.Div([dcc.Graph(id='matt-graph2', className='nine columns'),
+        html.Div([dcc.Graph(id='ben-graph', className='nine columns'),
             html.P('''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ullamcorper gravida lorem finibus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
             Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
             eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
@@ -150,14 +146,23 @@ app.layout = html.Div(
             Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
             eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
             Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''',  style={'marginTop': 100}, className='four columns'), 
-            dcc.Graph(id='ben-graph', className='eight columns', config={'displayModeBar':False})
+            dcc.Graph(id='ben-graph2', className='eight columns', config={'displayModeBar':False})
         ], className='container'),
-        html.Div([dcc.Graph(id='ben-graph2', className='nine columns'),
-            html.P('''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ullamcorper gravida lorem finibus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-            Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
-            eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
-            Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''', style={'marginTop': 100}, className='three columns')
-        ], className='container'),
+        # html.Div([dcc.Graph(id='ben-graph2', className='nine columns'),
+        #     html.P('''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ullamcorper gravida lorem finibus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+        #     Quisque tristique hendrerit metus ut hendrerit. Suspendisse id fringilla ipsum. Vivamus rutrum turpis eu arcu lacinia malesuada. Morbi a metus sit amet enim venenatis interdum. Donec faucibus dui vestibulum 
+        #     eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
+        #     Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''', style={'marginTop': 100}, className='three columns')
+        # ], className='container'),
+        html.Div(
+            [
+                dcc.Graph(id='northeast-scatter', className='three columns'),
+                dcc.Graph(id='midwest-scatter', className='three columns'),
+                dcc.Graph(id='south-scatter', className='three columns'),
+                dcc.Graph(id='west-scatter', className='three columns')
+            ], className='row'),
+        html.Br(),
+        html.Br(),
         html.Div([html.H2('How do opinions differ by region?')],style={'text-align': 'center', 'padding-bottom': '30'}),
         html.Br(),
         html.Div([
@@ -184,22 +189,33 @@ app.layout = html.Div(
 )
 
 def update_figure(selected):
-    county = get_county(2611)
-    name = df[df['geoid'] == county['id']]['GeoName'].values[0]
-    county_id = df[df['geoid'] == 2611]['GEOID']
-    county_index = county_id.index[0]
-    opacity = df[selected][county_index] * .01
-    custom_df = df[df.index == county_index]
-    color=df[df.index == county_index]
+    # county = [get_county(x) for x in [2611,2612]]
+    county = copy.deepcopy(counties)
+    county['features'] = [i for i in county['features'] if i['id'] in [2611,2612]]
+    # name = df[df['geoid'] == county['id']]['GeoName'].values[:]
+    newdf = df[df['geoid'].isin([2611,2612])]
+    # county_id = df[df['geoid'].isin([2611,2612])]['GEOID']
+    # county_index = county_id.index
+    # opacity = df[selected][county_index] * .01
+    opacity = newdf['happening'].values * .01
+    # custom_df = df[df.index == county_index]
+    # color=df[df.index == county_index]
     # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
+    colorsIdx = {'Democratic': 'blue', 'Republican': 'red'}
+    colorsNum = {'Democratic': 0, 'Republican': 1}
+    cols = newdf['party'].map(colorsIdx)
+    p_num = newdf['party'].map(colorsNum)
+    my_text = [n + "<br>Happening: " + str(h) for n, h in zip(list(newdf['GeoName']),list(newdf['happening']))]
     fig = go.Choroplethmapbox(
-        colorscale = 'Reds',
+        # colorscale = 'Reds',
         showscale=False,
-        customdata=custom_df,
+        customdata=newdf,
         geojson=county, 
-        locations=county_id,
-        z=pd.Series(p_num[county_index]),
-        text=name,
+        locations=newdf['GEOID'],
+        z=p_num,
+        text=my_text,
+        # text=newdf['GeoName'],
+        # hovertemplate= "%{text}<br>Happening: %{customdata['happening']}",
         autocolorscale=False,
         marker_opacity=opacity,
         marker={
@@ -213,7 +229,7 @@ def update_figure(selected):
     return {
         'data': [fig], 
         'layout': go.Layout(
-            title=name,
+            title="Congressional Districts 11 and 12 (115th Congress), Michigan",
             geo_scope='usa',
             mapbox_style='carto-positron', 
             mapbox_zoom=9, 
@@ -225,56 +241,56 @@ def update_figure(selected):
     }
 
 
-@app.callback(
-    dash.dependencies.Output('matt-graph2', 'figure'),
-    [dash.dependencies.Input('value-selected', 'value')]
-)
+# @app.callback(
+#     dash.dependencies.Output('matt-graph2', 'figure'),
+#     [dash.dependencies.Input('value-selected', 'value')]
+# )
 
-def update_figure(selected):
-    county = get_county(2612)
-    name = df[df['geoid'] == county['id']]['GeoName'].values[0]
-    county_id = df[df['geoid'] == 2612]['GEOID']
-    county_index = county_id.index[0]
-    opacity = df[selected][county_index] * .01
-    custom_df = df[df.index == county_index]
-    color=df[df.index == county_index]
-    # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
-    fig = go.Choroplethmapbox(
-        colorscale = 'Blues',
-        showscale=False,
-        customdata=custom_df,
-        geojson=county, 
-        locations=county_id,
-        z=pd.Series(p_num[county_index]),
-        text=name,
-        autocolorscale=False,
-        marker_opacity=opacity,
-        marker={
-            'line': {
-                'color': 'rgb(250,250,248)',
-                'width': 1,
-            },
-        }, 
-        colorbar={
-            'thickness': 10,
-            'len': 0.3,
-            'x': 1,
-            'y': 1, 
-        }
-    )
-    return {
-        'data': [fig], 
-        'layout': go.Layout(
-            title=name,
-            geo_scope='usa',
-            mapbox_style='carto-positron', 
-            mapbox_zoom=9, 
-            mapbox_center = {
-                'lat': 42.1702, 
-                'lon': -83.4229}, 
-                height=800
-        ),
-    }
+# def update_figure(selected):
+#     county = get_county(2612)
+#     name = df[df['geoid'] == county['id']]['GeoName'].values[0]
+#     county_id = df[df['geoid'] == 2612]['GEOID']
+#     county_index = county_id.index[0]
+#     opacity = df[selected][county_index] * .01
+#     custom_df = df[df.index == county_index]
+#     color=df[df.index == county_index]
+#     # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
+#     fig = go.Choroplethmapbox(
+#         colorscale = 'Blues',
+#         showscale=False,
+#         customdata=custom_df,
+#         geojson=county, 
+#         locations=county_id,
+#         z=pd.Series(p_num[county_index]),
+#         text=name,
+#         autocolorscale=False,
+#         marker_opacity=opacity,
+#         marker={
+#             'line': {
+#                 'color': 'rgb(250,250,248)',
+#                 'width': 1,
+#             },
+#         }, 
+#         colorbar={
+#             'thickness': 10,
+#             'len': 0.3,
+#             'x': 1,
+#             'y': 1, 
+#         }
+#     )
+#     return {
+#         'data': [fig], 
+#         'layout': go.Layout(
+#             title=name,
+#             geo_scope='usa',
+#             mapbox_style='carto-positron', 
+#             mapbox_zoom=9, 
+#             mapbox_center = {
+#                 'lat': 42.1702, 
+#                 'lon': -83.4229}, 
+#                 height=800
+#         ),
+#     }
 
 @app.callback(
     dash.dependencies.Output('ben-graph', 'figure'),
@@ -283,21 +299,40 @@ def update_figure(selected):
 
 def update_figure(selected):
     county = get_county(101)
-    name = df[df['geoid'] == county['id']]['GeoName'].values[0]
-    county_id = df[df['geoid'] == 101]['GEOID']
-    county_index = county_id.index[0]
-    opacity = df[selected][county_index] * .01
-    custom_df = df[df.index == county_index]
-    color=df[df.index == county_index]
+    # name = df[df['geoid'] == county['id']]['GeoName'].values[0]
+    # county_id = df[df['geoid'] == 101]['GEOID']
+    # county_index = county_id.index[0]
+    # opacity = df[selected][county_index] * .01
+    # custom_df = df[df.index == county_index]
+    # color=df[df.index == county_index]
+    
+    newdf = df[df['geoid'].isin([101])]
+    name = newdf['GeoName'].values[0]
+    # county_id = df[df['geoid'].isin([2611,2612])]['GEOID']
+    # county_index = county_id.index
+    # opacity = df[selected][county_index] * .01
+    opacity = newdf['happening'].values * .01
+    # custom_df = df[df.index == county_index]
+    # color=df[df.index == county_index]
+    # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
+    colorsIdx = {'Democratic': 'blue', 'Republican': 'red'}
+    colorsNum = {'Democratic': 0, 'Republican': 1}
+    cols = newdf['party'].map(colorsIdx)
+    p_num = newdf['party'].map(colorsNum)
+    # print(p_num)
+    my_text = [n + "<br>Happening: " + str(h) for n, h in zip(list(newdf['GeoName']),list(newdf['happening']))]
+
     # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
     fig = go.Choroplethmapbox(
-        colorscale = 'Reds',
+        # colorscale = 'RdBu',
         showscale=False,
-        customdata=custom_df,
+        customdata=newdf,
         geojson=county, 
-        locations=county_id,
-        z=pd.Series(p_num[county_index]),
-        text=name,
+        locations=newdf['GEOID'],
+        z=p_num,
+        zmin=0,
+        zmax=1,
+        text=my_text,
         autocolorscale=False,
         marker_opacity=opacity,
         marker={
@@ -330,21 +365,33 @@ def update_figure(selected):
 
 def update_figure(selected):
     county = get_county(3610)
-    name = df[df['geoid'] == county['id']]['GeoName'].values[0]
-    county_id = df[df['geoid'] == 3610]['GEOID']
-    county_index = county_id.index[0]
-    opacity = df[selected][county_index] * .01
-    custom_df = df[df.index == county_index]
-    color=df[df.index == county_index]
+    # name = df[df['geoid'] == county['id']]['GeoName'].values[0]
+    # county_id = df[df['geoid'] == 3610]['GEOID']
+    # county_index = county_id.index[0]
+    # opacity = df[selected][county_index] * .01
+    # custom_df = df[df.index == county_index]
+    # color=df[df.index == county_index]
+
+    newdf = df[df['geoid'].isin([3610])]
+    name = newdf['GeoName'].values[0]
+    opacity = newdf['happening'].values * .01
+    colorsIdx = {'Democratic': 'blue', 'Republican': 'red'}
+    colorsNum = {'Democratic': 0, 'Republican': 1}
+    cols = newdf['party'].map(colorsIdx)
+    p_num = newdf['party'].map(colorsNum)
+    my_text = [n + "<br>Happening: " + str(h) for n, h in zip(list(newdf['GeoName']),list(newdf['happening']))]
+
     # print(name, '\n', county_id, '\n', county_index, '\n', opacity, '\n', custom_df)
     fig = go.Choroplethmapbox(
-        colorscale = 'Blues',
+        # colorscale = 'Blues',
         showscale=False,
-        customdata=custom_df,
+        customdata=newdf,
         geojson=county, 
-        locations=county_id,
-        z=pd.Series(p_num[county_index]),
-        text=name,
+        locations=newdf['GEOID'],
+        z=p_num,
+        zmin=0,
+        zmax=1,
+        text=my_text,
         autocolorscale=False,
         marker_opacity=opacity,
         marker={
