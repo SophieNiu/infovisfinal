@@ -1,5 +1,11 @@
 # infovisfinal
 
+## Requirements
+  - Plotly
+  - Dash
+  - Numpy
+  - Pandas
+
 ## Start the program
 Install the dash python package 
 ""pip install dash""
