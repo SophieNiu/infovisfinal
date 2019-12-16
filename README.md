@@ -7,9 +7,12 @@
   - Pandas
 
 ## Start the program
-(1) Install the dash python package 
-""pip install dash""
+(1) Install the required python packages shown above
+
+
 (2) clone the github repo/ download the map_dash.py 
+
+
 Then run the map_dash.py code, it would open up a local server developmental page of our demo. 
 If you run into the url authorization problem. clone the repo(or download the dataset folder). in map_dash.py, comment out line 20-22, and 86. Uncomment 13-17 and 84 to reroute the dataset access. This should work. (the line number may be a bit different but these are where we have https links for external sources). 
 We are deploying it to a personal server that one of our teammate has but it may not come soon. 
