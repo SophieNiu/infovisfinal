@@ -1,5 +1,10 @@
 # infovisfinal
 
+## Start the program
+Install the dash python package 
+""pip install dash""
+Then run the map_dash.py code, it would open up a local server developmental page of our demo. We are deploying it to a personal server that one of our teammate has but it may not come soon. 
+
 ## Data Cleaning
 In the original dataset, there is a column called __GeoName__ which has names of the county/CBSA and states separated by comma. We separated them and put them into several columns.
 New file was called _climate_dataset_cleaned_v1.0.csv_ in the file _dataset_.
@@ -24,10 +29,3 @@ New file was called _climate_dataset_cleaned_v1.0.csv_ in the file _dataset_.
   5. cd113 - have no idea what it means
 * About column  __TotalPop__
   Since some counties include areas in several states, the sum of __TotalPop__ for all the counties in one state may not equal to the __TotalPop__ of one state.You can find more information in the code.
-
-
-## Agenda
-1. visualization selection 
-2. interaction
-3. website layout/ storyline (sections, content (as in text), visualization)
-4. insights (3) 
