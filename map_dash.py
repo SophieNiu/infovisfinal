@@ -81,8 +81,7 @@ states = {
         'WV': 'West Virginia',
         'WY': 'Wyoming'
 }
-# df2 = pd.read_csv(
-#     'dataset/CleanedData/cleaned_district_events.csv')
+# df2 = pd.read_csv('dataset/CleanedData/cleaned_district_events.csv')
 
 df2 = pd.read_csv('https://raw.githubusercontent.com/SophieNiu/infovisfinal/master/dataset/CleanedData/cleaned_district_events.csv')
 df2['state'] = df2['state'].apply(lambda x: states[x])
@@ -174,8 +173,7 @@ app.layout = html.Div(
         #     eros interdum, ac lobortis diam finibus. Fusce malesuada mauris hendrerit tellus fringilla tempus. Ut iaculis mattis justo, ac malesuada dolor porta vitae. Cras viverra erat eu quam placerat, ut tempor justo suscipit. 
         #     Mauris in odio suscipit elit ultricies placerat et et ante. Nullam eget purus eu leo placerat placerat.''', style={'marginTop': 100}, className='three columns')
         # ], className='container'),
-        html.Div(html.P('''In addition to finding little pattern in people's climate opinion with regard to their party affiliation,  we also found little correlation between people who 
-                    experienced harsh weather more frequently and the likelihood of believing more strongly in climate change.''', style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)), 
+        html.Div(html.P('''In addition to find the pattern in people's climate opinion with regard to their party affiliation, we also found that generally, people in the coastal areas are more in agreement in believing in the climate change than people in the inner land area. The specific District 1 in Alabama is a unique outlier to the finding.''', style={'marginTop': 50, 'text-align': 'center', 'padding': '5'},)), 
         html.Br(),
         html.Div(html.P('''
                     We obtained a dataset containing all weather alerts by congressional district for the last 12 months from
@@ -210,8 +208,8 @@ app.layout = html.Div(
         ], className='container'),
         html.Br(),
         html.Div([dcc.Dropdown(id='value-selected', value='happening', options=[{'label': 'How many people believe climate change is happening?', 'value': 'happening'}, {'label': 'How many people don\'t believe climate change is happening?', 'value': 'happeningOppose'}, {'label': 'How many people believe climate change is caused by humans?', 'value': 'human'},{'label': 'How many people don\'t believe climate change is caused by humans?', 'value': 'humanOppose'}], style={'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'width': '70%'}, className='container')], className='row'), dcc.Graph(id='my-graph'),
-        html.Br(),
-        html.Div([dcc.Graph(id='events-scatter', className='container')])
+        # html.Br(),
+        # html.Div([dcc.Graph(id='events-scatter', className='container')])
     ]
 )
 
@@ -707,48 +705,48 @@ def update_graph_west(selected):
         )
     }
 
-@app.callback(
-    dash.dependencies.Output('events-scatter', 'figure'),
-    [dash.dependencies.Input('value-selected2', 'value'), dash.dependencies.Input('value-selected3', 'value')])
+# @app.callback(
+#     dash.dependencies.Output('events-scatter', 'figure'),
+#     [dash.dependencies.Input('value-selected2', 'value'), dash.dependencies.Input('value-selected3', 'value')])
 
-def update_graph(selected2, selected3):
-    df1 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values[0])
-    df2 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values[0])
-    max_1 = pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values.max()
-    # max_2 = pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values
-    # combined = np.concatenate(max_1, max_2)
-    # maxed = combined.max()
+# def update_graph(selected2, selected3):
+#     df1 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values[0])
+#     df2 = list(pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values[0])
+#     max_1 = pd.pivot_table(new.groupby('GeoName').get_group(selected2), values='alerts_total', columns='event').values.max()
+#     # max_2 = pd.pivot_table(new.groupby('GeoName').get_group(selected3), values='alerts_total', columns='event').values
+#     # combined = np.concatenate(max_1, max_2)
+#     # maxed = combined.max()
 
-    categories = list(pd.pivot_table(new.groupby('geoid').get_group(101), values='alerts_total', columns='event').columns)
+#     categories = list(pd.pivot_table(new.groupby('geoid').get_group(101), values='alerts_total', columns='event').columns)
 
-    fig = go.Figure()
+#     fig = go.Figure()
 
-    fig.add_trace(go.Scatterpolar(
-        r=df1,
-        theta=categories,
-        fill='toself',
-        name=selected2,
-        marker_color='rgb(104,115,135)'
-    ))
+#     fig.add_trace(go.Scatterpolar(
+#         r=df1,
+#         theta=categories,
+#         fill='toself',
+#         name=selected2,
+#         marker_color='rgb(104,115,135)'
+#     ))
 
-    fig.add_trace(go.Scatterpolar(
-        r=df2,
-        theta=categories,
-        fill='toself',
-        name=selected3,
-        marker_color='rgb(136,171,184)'
-    ))
+#     fig.add_trace(go.Scatterpolar(
+#         r=df2,
+#         theta=categories,
+#         fill='toself',
+#         name=selected3,
+#         marker_color='rgb(136,171,184)'
+#     ))
 
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-            visible=True,
-            range=[0, max_1]
-            )),
-        showlegend=True
-    )
+#     fig.update_layout(
+#         polar=dict(
+#             radialaxis=dict(
+#             visible=True,
+#             range=[0, max_1]
+#             )),
+#         showlegend=True
+#     )
 
-    return fig
+#     return fig
 
 if __name__ == '__main__':
     app.run_server(debug=True)
